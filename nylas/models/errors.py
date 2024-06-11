@@ -54,6 +54,11 @@ class NylasApiErrorResponseData:
     message: str
     provider_error: Optional[dict] = None
 
+    def __str__(self) -> str:
+        if self.provider_error is None:
+            return self.message
+        return f'{self.message}: {self.provider_error}'
+
 
 @dataclass_json
 @dataclass
@@ -108,7 +113,7 @@ class NylasApiError(AbstractNylasApiError):
             api_error: The error details from the API.
             status_code: The HTTP status code of the error response.
         """
-        super().__init__(api_error.error.message, api_error.request_id, status_code)
+        super().__init__(str(api_error.error), api_error.request_id, status_code)
         self.type: str = api_error.error.type
         self.provider_error: Optional[dict] = api_error.error.provider_error
 
